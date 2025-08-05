@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const session = require('express-session')
+const session = require('express-session');
+const { users } = require('./router/auth_users.js');
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
@@ -11,7 +12,21 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+    if( req.session.authorization ){
+        let token = req.session.authorization['accessToken'];
+
+        //veryfy token
+        jwt.verify(token, "access", (error, user) => {
+            if(error){
+                req.user = user;
+                next(); //procedd to next middleware
+            }else{
+                return res.status(403).json({ message: "user not authenticated"});
+            }
+        });
+    }else{
+        return res.status(403).json({ message: "user not logged in. "});
+    }
 });
  
 const PORT =5000;

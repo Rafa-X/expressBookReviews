@@ -17,10 +17,11 @@ public_users.get('/',function (req, res) {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-  const filtered = Object.entries(books)
-  .filter(([key,book]) => book.isbn === req.params.isbn)
-  .map(([key, book]) => ({ id: key, ...book }));
-  return res.status(200).send(JSON.stringify(filtered, null, 4));
+    console.log(req.body.isbn);
+    const filtered = Object.entries(books)
+    .filter(([key,book]) => book.isbn === req.body.isbn)
+    .map(([key, book]) => ({ id: key, ...book }));
+    return res.status(200).send(JSON.stringify(filtered, null, 4));
  });
   
 // Get book details based on author
