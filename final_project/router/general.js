@@ -64,8 +64,24 @@ public_users.get('/review/:isbn',function (req, res) {
 
 //review book
 public_users.post('/customer/auth/review', function(req,res){
-    console.log(req.session.authorization)
-    return;
+    const review = req.body.review;
+    const isbn = req.body.isbn;
+    const username = req.session.authorization.username;
+
+    if(isbn && review){
+        const key = Object.keys(books).find(key => books[key].isbn === isbn);
+        const book = books[key];
+        console.log(book);
+
+        if(!book){
+            return res.status(404).send({message: "Error, book don't exist."});
+        }else{
+            book.reviews[username] = review;
+            console.log(book.reviews);
+            return res.status(200).send("Review added: "+JSON.stringify(book.reviews, null, 4));
+        }
+    }
+    return res.status(208).json({message: "Error, information missing."});
 })
 
 module.exports.general = public_users;
