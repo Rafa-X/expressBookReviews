@@ -82,6 +82,30 @@ public_users.post('/customer/auth/review', function(req,res){
         }
     }
     return res.status(208).json({message: "Error, information missing."});
-})
+});
+
+public_users.delete('/customer/auth/review:isbn', function(req,res){
+    const isbn = req.body.isbn;
+    const username = req.session.authorization.username;
+
+    const key = Object.keys(books).find(key => books[key].isbn === isbn);
+    const book = books[key];
+    console.log(book);
+
+    if (!isbn) {
+        return res.status(400).json({ message: "Error, ISBN missing." });
+    }
+    if (!book) {
+        return res.status(404).json({ message: "Error, book doesn't exist." });
+    }
+
+    // Verificar si el usuario tiene un review
+    if (book.reviews[username]) {
+        delete book.reviews[username];
+        return res.status(200).send("Review deleted successfully. Reviews remaining:" + JSON.stringify(book.reviews, null, 4));
+    } else {
+        return res.status(404).json({ message: "No review found for this user." });
+    }
+});
 
 module.exports.general = public_users;
