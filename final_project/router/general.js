@@ -54,20 +54,36 @@ public_users.get('/isbn/:isbn', function (req, res) {
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-    console.log(req.body.author);
-    const filtered = Object.entries(books)
-    .filter(([key,book]) => book.author === req.body.author)
-    .map(([key,book]) => ({ id: key, ...book}));
-    return res.status(200).send(JSON.stringify(filtered, null, 4));
+    new Promise((resolve, reject) => {
+        const filtered = Object.entries(books)
+            .filter(([key, book]) => book.author === req.body.author)
+            .map(([key, book]) => ({ id: key, ...book }));
+
+        resolve(filtered);
+    })
+    .then(filtered => {
+        res.status(200).json(filtered);
+    })
+    .catch(error => {
+        res.status(500).json({ error: error.message });
+    });
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-    console.log(req.body.title);
-    const filtered = Object.entries(books)
-    .filter(([key,book]) => book.title === req.body.title)
-    .map(([key,book]) => ({ id: key, ...book}));
-    return res.status(200).send(JSON.stringify(filtered, null, 4));
+    new Promise((resolve, reject) => {
+        const filtered = Object.entries(books)
+            .filter(([key, book]) => book.title === req.body.title)
+            .map(([key, book]) => ({ id: key, ...book }));
+
+        resolve(filtered);
+    })
+    .then(filtered => {
+        res.status(200).json(filtered);
+    })
+    .catch(error => {
+        res.status(500).json({ error: error.message });
+    });
 });
 
 //  Get book review
